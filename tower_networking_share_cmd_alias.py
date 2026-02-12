@@ -60,43 +60,88 @@ def load_file(filename: Path):
     return json.load(open(filename, 'r'))
 
 def load_library():
-    file_list = ([f"[{i}] {file}" for path in Path('library').walk() for i, file in enumerate(path[2], start=1)])
-    file_list.append('[Q] Go Back')
+    file_list = []
+    
+    if not Path('library').exists():
+        Path('library').mkdir()
+
+    for root, dirs, files in Path('library').walk():
+        for file in files:
+            if file.endswith('.json'):
+                file_list.append(file)
+                
+    if not file_list:
+        print("No library files found. Try running [5] Pull libraries first.")
+        return
 
     while True:
-        print('\n'.join(file_list))
+        for i, file in enumerate(file_list, start=1):
+            print(f"[{i}] {file}")
+        print('[Q] Go Back')
         user_input = get_user_input()
 
         if user_input.lower() in ['', 'q']:
             break
-        filename = Path('library') / re.sub(r'^(.*?)\s+', '', file_list[int(user_input) - 1])
+            
         try:
-            data = load_file(filename)
-            data = json.loads(base64.b64decode(data['content']).decode())
-        except Exception as e:
-            print('That is not a valid option, please try again.')
-            continue
-        print("\nPreview of aliases to import:")
-        print(json.dumps(data, indent=4))
+            selection_index = int(user_input) - 1
+            if 0 <= selection_index < len(file_list):
+                filename = Path('library') / file_list[selection_index]
+                
+                # Just load the JSON directly
+                data = load_file(filename)
+                
+                print("\nPreview of aliases to import:")
+                print(json.dumps(data, indent=4))
 
-        if write_to_file(data):
-            break
+                if write_to_file(data):
+                    break
+            else:
+                print("Invalid number.")
+        except ValueError:
+            print("Please enter a number.")
 
 def pull_new_files():
+    if not Path('library').exists():
+        Path('library').mkdir()
+
     session = requests.Session()
+    print("Checking for updates from GitHub...")
     try:
         url = "https://api.github.com/repos/iiEpic/tower-networking-alias-manager/git/trees/97891c53c3e21eb61614c1b1043b96de53765b8b?recursive=1"
         response = session.get(url)
         data = response.json()
 
-        for file in [i for i in data["tree"] if i['path'].startswith('library/')]:
+        for file in [i for i in data.get("tree", []) if i['path'].startswith('library/')]:
             file_response = session.get(file['url'])
-            file_data = file_response.json()
-            with open(Path('library') / file['path'].replace('library/', ''), 'w+') as f:
-                json.dump(file_data, f, indent=4)
-        print('Successfully pulled new library files from Github.')
+            blob_data = file_response.json()
+
+            raw_file_content = base64.b64decode(blob_data['content']).decode('utf-8')
+            
+            final_json = {}
+            local_filename = Path('library') / file['path'].replace('library/', '')
+
+            if local_filename.suffix == '.txt':
+                try:
+                    final_json = json.loads(base64.b64decode(raw_file_content).decode('utf-8'))
+                    local_filename = local_filename.with_suffix('.json')
+                except Exception as e:
+                    print(f"Skipping {local_filename}: Invalid Base64 string.")
+                    continue
+
+            elif local_filename.suffix == '.json':
+                try:
+                    final_json = json.loads(raw_file_content)
+                except json.JSONDecodeError:
+                    continue
+
+            with open(local_filename, 'w+') as f:
+                json.dump(final_json, f, indent=4)
+                
+        print('Successfully updated library files.')
+        
     except Exception as e:
-        print('Unable to retrieve new library files from Github.')
+        print(f'Error updating library: {e}')
 
 def write_to_file(new_aliases: dict):
     confirm = input('Overwriting your current aliases with these. Are you sure? [Y/n]: ')
