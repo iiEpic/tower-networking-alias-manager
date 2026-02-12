@@ -3,6 +3,7 @@ from pathlib import Path
 import base64
 import json
 import re
+import requests
 import sys
 
 
@@ -68,17 +69,34 @@ def load_library():
 
         if user_input.lower() in ['', 'q']:
             break
-        filename = Path('library') / re.sub('^(.*?)\s+', '', file_list[int(user_input) - 1])
+        filename = Path('library') / re.sub(r'^(.*?)\s+', '', file_list[int(user_input) - 1])
         try:
             data = load_file(filename)
+            data = json.loads(base64.b64decode(data['content']).decode())
         except Exception as e:
             print('That is not a valid option, please try again.')
             continue
         print("\nPreview of aliases to import:")
-        print(json.dumps(data, indent=2))
+        print(json.dumps(data, indent=4))
 
         if write_to_file(data):
             break
+
+def pull_new_files():
+    session = requests.Session()
+    try:
+        url = "https://api.github.com/repos/iiEpic/tower-networking-alias-manager/git/trees/97891c53c3e21eb61614c1b1043b96de53765b8b?recursive=1"
+        response = session.get(url)
+        data = response.json()
+
+        for file in [i for i in data["tree"] if i['path'].startswith('library/')]:
+            file_response = session.get(file['url'])
+            file_data = file_response.json()
+            with open(Path('library') / file['path'].replace('library/', ''), 'w+') as f:
+                json.dump(file_data, f, indent=4)
+        print('Successfully pulled new library files from Github.')
+    except Exception as e:
+        print('Unable to retrieve new library files from Github.')
 
 def write_to_file(new_aliases: dict):
     confirm = input('Overwriting your current aliases with these. Are you sure? [Y/n]: ')
@@ -103,14 +121,16 @@ def write_to_file(new_aliases: dict):
         print("Cancelled.")
         return False
 
-
 def main():
+    # library = pull_new_files()
+
     while True:
         print('\n---[ Tower Networking Inc Alias Modifier ]---')
         print('[1] View current alias (Plain Text)')
         print('[2] Dump current alias (Base64 for sharing)')
         print('[3] Load a Base64 string')
         print('[4] Load from library')
+        print('[5] Pull libraries from Github')
         print('[Q] Quit')
 
         user_input = get_user_input()
@@ -124,6 +144,8 @@ def main():
             load_base64_string()
         elif user_input == '4':
             load_library()
+        elif user_input == '5':
+            pull_new_files()
         elif user_input.lower() in ['', 'q']:
             break
 
