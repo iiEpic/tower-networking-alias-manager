@@ -15,12 +15,12 @@ def get_settings_path():
         base = home / ".local" / "share"
     else:
         raise OSError(f"Unsupported platform: {sys.platform}")
-    
-    return base / 'Godot' / 'app_userdata' / 'Tower Networking Inc' / 'settings.json'
+
+    return base / 'godot' / 'app_userdata' / 'Tower Networking Inc' / 'settings.json'
 
 def dump_alias(plain_text:bool =False):
     appdata_path = get_settings_path()
-    
+
     try:
         with open(appdata_path, 'r') as f:
             data = json.load(f)
@@ -44,7 +44,7 @@ def load_alias():
 
     print("Preview of aliases to import:")
     print(json.dumps(new_aliases, indent=2))
-    
+
     confirm = input('Overwriting your current aliases with these. Are you sure? [Y/n]: ')
     if confirm.lower() in ['', 'y', 'ye', 'yes']:
         appdata_path = get_settings_path()
@@ -60,7 +60,7 @@ def load_alias():
 
         with open(appdata_path, 'w') as f:
             json.dump(full_settings, f, indent=4)
-            
+
         print('Success! Aliases updated.')
     else:
         print("Cancelled.")
@@ -72,9 +72,12 @@ def main():
         print('[2] Dump current alias (Base64 for sharing)')
         print('[3] Load a Base64 string')
         print('[Q] Quit')
-        
-        user_input = input(': ').lower()
-        
+
+        try:
+            user_input = input(': ').lower()
+        except KeyboardInterrupt:
+            sys.exit()
+
         if user_input == '1':
             print("\n" + dump_alias(plain_text=True))
         elif user_input == '2':
