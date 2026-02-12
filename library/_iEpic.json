@@ -1,0 +1,20 @@
+{
+  "base64_string": "eyJkaXNhYmxlX2RoY3AiOiAibmV0IGRoY3AgZGlzYWJsZSBvbiAkMTsiLCAiZnMiOiAiZmlyZXdhbGwgc2hvdyBvbiAkMTsiLCAibHMiOiAic2Z0cCBscyBvbiAkMTsiLCAibWFwIjogImRucyBtYXAgJDEgYXMgJDIgb24gJDM7IiwgIm5hbWUiOiAibmV0IGFkZHJlc3Mgc2V0ICQxIG9uICQyOyIsICJwZCI6ICJwcm9ncmFtIGRlc2NyaWJlICQxOyIsICJwaSI6ICJlY2hvIHByb2dyYW0gaW5zdGFsbDsgZWNobyBwaSAkcHJvZ3JhbT0gJDEgJHNlcnZlcj0gJDI7IHByb2dyYW0gaW5zdGFsbCAkMSBvbiAkMjsiLCAicHMiOiAiZWNobyBwcm9ncmFtIHN0YXJ0OyBlY2hvIHBzICRwcm9ncmFtPSAkMSAkc2VydmVyPSAkMjsgcHJvZ3JhbSBzdGFydCAkMSBvbiAkMjsiLCAicHN0b3AiOiAiZWNobyBwcm9ncmFtIHN0b3A7IGVjaG8gcHN0b3AgJHByb2dyYW09ICQxICRzZXJ2ZXI9ICQyOyBwcm9ncmFtIHN0b3AgJDEgb24gJDI7IiwgInB2IjogImVjaG8gcHJvZ3JhbSB2aWV3OyBwcm9ncmFtIHZpZXcgcnVubmluZyBvbiAkMTsiLCAicm0iOiAiZWNobyBybSAkZmlsZT0gJDEgJGZyb209ICQyOyBzZnRwIHJtICQxIG9uICQyOyIsICJycyI6ICJlY2hvIHJzICRyb3V0ZXI9ICQxOyByb3V0ZSBzaG93IG9uICQxOyIsICJzZXR1cF9kaGNwIjogImVjaG8gc2V0dXBfZGhjcCAkZmxvb3I9ICQxICRod2lkPSAkMiAkZG5zPSAkMzsgbmV0IGFkZHJlc3Mgc2V0ICQxL2RoY3Agb24gJDI7IHByb2dyYW0gaW5zdGFsbCBkbnNtYXNxIG9uICQxL2RoY3A7IHByb2dyYW0gc3RhcnQgZG5zbWFzcSBvbiAkMS9kaGNwOyBkaGNwIG9wdGlvbiBkbnMgJDMgb24gJDEvZGhjcDsgZGhjcCBvcHRpb24gcHJlZml4ICQxLyBvbiAkMS9kaGNwOyIsICJzZXR1cF9maXJld2FsbCI6ICJlY2hvIHNldHVwX2ZpcmV3YWxsICRod2lkPSAkMSAkbmFtZT0gJDI7IG5ldCBhZGRyZXNzIHNldCAkMiBvbiAkMTsgZmlyZXdhbGwgY2xlYXIgb24gJDI7IGZpcmV3YWxsIGFsbG93IHRjcC8yMyBvbiAkMjsgZmlyZXdhbGwgYWxsb3cgdWRwLzUzIG9uICQyOyBmaXJld2FsbCBhbGxvdyB1ZHAvNjkgb24gJDI7IGZpcmV3YWxsIGFsbG93IHRjcC84MCBvbiAkMjsgZmlyZXdhbGwgYWxsb3cgdGNwLzQ0MyBvbiAkMjsgZmlyZXdhbGwgYWxsb3cgdWRwLzUyMCBvbiAkMjsgZmlyZXdhbGwgYWxsb3cgdWRwLzU1NCBvbiAkMjsgZmlyZXdhbGwgYWxsb3cgdWRwLzUwNjAgb24gJDI7IGZpcmV3YWxsIGFsbG93IHRjcC8zMzA2IG9uICQyOyBmaXJld2FsbCBhbGxvdyB0Y3AvODMzMyBvbiAkMjsgZmlyZXdhbGwgZGVmYXVsdCBkZW55IG9uICQyOyIsICJ1c2UiOiAiYWx3YXlzIHVzaW5nICQxOyJ9",
+  "plaintext": {
+    "disable_dhcp": "net dhcp disable on $1;",
+    "fs": "firewall show on $1;",
+    "ls": "sftp ls on $1;",
+    "map": "dns map $1 as $2 on $3;",
+    "name": "net address set $1 on $2;",
+    "pd": "program describe $1;",
+    "pi": "echo program install; echo pi $program= $1 $server= $2; program install $1 on $2;",
+    "ps": "echo program start; echo ps $program= $1 $server= $2; program start $1 on $2;",
+    "pstop": "echo program stop; echo pstop $program= $1 $server= $2; program stop $1 on $2;",
+    "pv": "echo program view; program view running on $1;",
+    "rm": "echo rm $file= $1 $from= $2; sftp rm $1 on $2;",
+    "rs": "echo rs $router= $1; route show on $1;",
+    "setup_dhcp": "echo setup_dhcp $floor= $1 $hwid= $2 $dns= $3; net address set $1/dhcp on $2; program install dnsmasq on $1/dhcp; program start dnsmasq on $1/dhcp; dhcp option dns $3 on $1/dhcp; dhcp option prefix $1/ on $1/dhcp;",
+    "setup_firewall": "echo setup_firewall $hwid= $1 $name= $2; net address set $2 on $1; firewall clear on $2; firewall allow tcp/23 on $2; firewall allow udp/53 on $2; firewall allow udp/69 on $2; firewall allow tcp/80 on $2; firewall allow tcp/443 on $2; firewall allow udp/520 on $2; firewall allow udp/554 on $2; firewall allow udp/5060 on $2; firewall allow tcp/3306 on $2; firewall allow tcp/8333 on $2; firewall default deny on $2;",
+    "use": "always using $1;"
+  }
+}
