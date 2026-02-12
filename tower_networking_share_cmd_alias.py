@@ -56,9 +56,6 @@ def load_base64_string():
 
     write_to_file(new_aliases)
 
-def load_file(filename: Path):
-    return json.load(open(filename, 'r'))
-
 def load_library():
     file_list = []
     
@@ -89,12 +86,12 @@ def load_library():
                 filename = Path('library') / file_list[selection_index]
                 
                 # Just load the JSON directly
-                data = load_file(filename)
-                
-                print("\nPreview of aliases to import:")
-                print(json.dumps(data, indent=4))
+                data = json.load(open(filename, 'r'))
 
-                if write_to_file(data):
+                print("\nPreview of aliases to import:")
+                print(json.dumps(data['plaintext'], indent=4))
+
+                if write_to_file(data['plaintext']):
                     break
             else:
                 print("Invalid number.")
