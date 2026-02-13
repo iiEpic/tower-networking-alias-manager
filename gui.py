@@ -390,7 +390,7 @@ class TowerAliasManager(ctk.CTk):
             if not lib_path.exists(): lib_path.mkdir()
 
             session = requests.Session()
-            url = "https://api.github.com/repos/iiEpic/tower-networking-alias-manager/git/trees/97891c53c3e21eb61614c1b1043b96de53765b8b?recursive=1"
+            url = "https://api.github.com/repos/iiEpic/tower-networking-alias-manager/git/trees/46741b60579bf645139403109d3d1a6ee2a8ef76?recursive=1"
             
             data = session.get(url).json()
             count = 0
