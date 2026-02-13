@@ -115,17 +115,33 @@ class EditorFrame(ctk.CTkFrame):
 
     def update_search(self, *args):
         search_query = self.search_var.get().lower()
+        
         for child in self.key_list_frame.winfo_children():
             child.destroy()
+        self.button_map = {}
         
-        # Sort keys to make finding things easier
         for key in sorted(self.all_aliases.keys()):
             if search_query in key.lower():
-                btn = ctk.CTkButton(self.key_list_frame, text=key, fg_color="transparent", text_color=("gray10", "gray90"), anchor="w", command=lambda k=key: self.select_key(k))
+                btn = ctk.CTkButton(self.key_list_frame, 
+                                  text=key, 
+                                  fg_color="transparent", 
+                                  text_color=("gray10", "gray90"), 
+                                  anchor="w", 
+                                  command=lambda k=key: self.select_key(k))
                 btn.pack(fill="x", padx=5, pady=2)
+                
+                self.button_map[key] = btn
 
     def select_key(self, key):
         self.selected_key = key
+        
+        # 3. Highlight Logic: Loop through map to update colors
+        for k, btn in self.button_map.items():
+            if k == key:
+                btn.configure(fg_color="#1f6aa5") # Active Color
+            else:
+                btn.configure(fg_color="transparent") # Inactive Color
+
         self.label_editing.configure(text=f"Editing Alias: {key}", text_color="white")
         self.val_textbox.delete("0.0", "end")
         
