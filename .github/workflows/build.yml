@@ -21,9 +21,14 @@ jobs:
     - name: Install PyInstaller
       run: pip install pyinstaller
       
-    - name: Build with PyInstaller
-      run: pyinstaller --onefile --name "Tower Alias Manager" tower_networking_share_cmd_alias.py
-      
+    - name: Build CLI Version
+      run: |
+        pyinstaller --onefile --name "Tower_Alias_CLI" tower_networking_share_cmd_alias.py
+
+    - name: Build GUI Version
+      run: |
+        pyinstaller --noconsole --onefile --collect-all customtkinter --name "Tower_Alias_Manager" gui.py
+
     - name: Upload Artifacts
       uses: actions/upload-artifact@v6
       with:
